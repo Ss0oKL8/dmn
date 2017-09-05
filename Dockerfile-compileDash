@@ -1,0 +1,40 @@
+#this will output a dashd and dash-cli in the out folder of your current directory
+#usage: docker build -t compiledash -f Dockerfile-compileDash .
+#       docker run -v $(pwd)/dash:/dash compiledash
+#
+
+FROM alpine:3.6
+MAINTAINER your mom
+LABEL description="compile dash for alpine linux"
+#ENV BRANCH v0.12.2.x
+ENV BRANCH master
+
+RUN apk add --update bash grep curl git py-virtualenv gnupg p7zip tar libtool automake autoconf openssl-dev libevent-dev boost-dev build-base gcc abuild binutils util-linux pciutils usbutils coreutils binutils findutils cmake 
+RUN mkdir /build
+CMD set -e \
+  && cd /build \
+  && git clone https://github.com/dashpay/dash.git dash-src -b ${BRANCH}\
+  && cd /build/dash-src \
+  && wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz \
+  && tar -xzf db-4.8.30.NC.tar.gz \
+  && cd /build/dash-src/db-4.8.30.NC/build_unix \
+  && ../dist/configure --enable-cxx --disable-shared --with-pic --prefix=/build/dash-src/db4 \
+  && make install \
+  && cd /build/dash-src \
+  && ./autogen.sh \
+  && ./configure --enable-cxx --disable-shared --with-pic LDFLAGS="-L$(pwd)/db4/lib/" CPPFLAGS="-I$(pwd)/db4/include/" \
+  && make -j$(nproc)\
+  && strip src/dashd src/dash-cli \
+  && cp -v src/dashd src/dash-cli /dash/. \
+  && /dash/dashd -version \
+  && /dash/dash-cli -version \
+  && cd /dash \
+  && rm -rf sentinel \
+  && git clone https://github.com/dashpay/sentinel.git \
+  && cd /dash/sentinel \
+  && virtualenv venv \
+  && venv/bin/pip install -r requirements.txt \
+  && cd /dash \
+  && ln -s ~ ~/.dashcore \
+  && rm -rf dash-src 
+
