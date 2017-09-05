@@ -6,8 +6,8 @@
 FROM alpine:3.6
 MAINTAINER your mom
 LABEL description="compile dash for alpine linux"
-#ENV BRANCH v0.12.2.x
-ENV BRANCH master
+ENV BRANCH v0.12.2.x
+#ENV BRANCH master
 
 RUN apk add --update bash grep curl git py-virtualenv gnupg p7zip tar libtool automake autoconf openssl-dev libevent-dev boost-dev build-base gcc abuild binutils util-linux pciutils usbutils coreutils binutils findutils cmake 
 RUN mkdir /build

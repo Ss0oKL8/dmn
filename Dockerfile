@@ -7,17 +7,17 @@ RUN apk add --no-cache --update grep curl py-virtualenv p7zip openssl libevent b
 
 #which network do you want this build to use?
 #for mainnet: NETWORK:unset BOOTSTRAP:mainnet DASH_OPTS:unset EXPOSE:9999
-ENV BOOTSTRAP mainnet
-EXPOSE 9999
-ENV BRANCH master
+#ENV BOOTSTRAP mainnet
+#EXPOSE 9999
+#ENV BRANCH master
 
 #for testnet: NETWORK:testnet3 BOOTSTRAP:testnet DASH_OPTS:-testnet EXPOSE:19999,19998
-#ENV NETWORK testnet3
-#ENV BOOTSTRAP testnet
-#ENV DASH_OPTS -testnet
-#EXPOSE 19999
-#EXPOSE 19998
-#ENV BRANCH v0.12.2.x
+ENV NETWORK testnet3
+ENV BOOTSTRAP testnet
+ENV DASH_OPTS -testnet
+EXPOSE 19999
+EXPOSE 19998
+ENV BRANCH v0.12.2.x
 
 ADD dash /dash
 ENV HOME /dash
